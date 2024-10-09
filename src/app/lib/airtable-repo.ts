@@ -43,10 +43,7 @@ class AirtableRepo implements Repository {
     }));
   }
 
-  async fetchFilteredTasks(
-    query?: string,
-    currentPage?: number,
-  ) {
+  async fetchFilteredTasks(query?: string, currentPage?: number) {
     let records;
 
     try {
@@ -65,12 +62,22 @@ class AirtableRepo implements Repository {
       throw new Error('Failed to fetch the tasks.');
     }
 
-    const out = records.map((record) => ({
-      id: record.getId(),
-      name: record.get('Name'),
-      notes: record.get('Notes'),
-      status: record.get('Status'),
-    }));
+    const out: Task[] = [];
+
+    records.forEach((record) => {
+      const userIds = record.get('User');
+      if (!Array.isArray(userIds) || !userIds.length) {
+        return;
+      }
+
+      out.push({
+        id: record.getId(),
+        name: <string>record.get('Name'),
+        notes: <string>record.get('Notes'),
+        status: <'Todo' | 'In progress' | 'Done'>record.get('Status'),
+        userId: userIds[0],
+      });
+    });
 
     if (!currentPage) {
       return out;

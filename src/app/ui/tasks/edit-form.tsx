@@ -17,10 +17,6 @@ export default function Form({ task, users }: { task: TaskUpdateFormParams, user
   const updateTaskWithId = updateTask.bind(null, task.id);
   const [state, formAction] = useFormState(updateTaskWithId, initialState);
 
-  console.log('task.name', task.name);
-  console.log('task.notes', task.notes);
-  console.log('task.status', task.status);
-
   return (
     <form action={formAction}>
       <div className="rounded-md bg-gray-50 p-4 md:p-6">
